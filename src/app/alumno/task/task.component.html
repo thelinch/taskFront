@@ -1,0 +1,76 @@
+<a (click)="back()">Atras</a>
+<div class="row">
+    <div class="col s12 center-align">
+        <a class="waves-effect waves-teal margin_tiny blue btn-large btn-floating "
+            (click)="cleanForm(formTask);setTask(null);openModal(nameFormTask)">
+            <i class="material-icons">
+                add_circle_outline
+            </i>
+        </a>
+    </div>
+    <div class="col s12 m6" *ngFor="let task of tasks$ | async">
+        <div class="card hoverable  overflow-visible horizontal border-right-50 center-align">
+            <div class="circleCard flex justify-center z-depth-1 valign-wrapper">
+                <div class="actions position_absolute lado flex justify-center  valign-wrapper  right_0">
+                    <a (click)="setTask(task);deleteTask(task.id)"
+                        class="waves-effect waves-teal btn-small btn-floating margin_tiny "
+                        [ngClass]="{'disabled': evaluationDateTask(task)}"> <i class="material-icons red">
+                            delete_sweep
+                        </i></a>
+                    <a class="waves-effect waves-teal btn-small btn-floating margin_tiny "
+                        [ngClass]="{'disabled': evaluationDateTask(task)}"
+                        (click)="fillInDataFormTask(task);setTask(task);openModal(nameFormTask)"> <i
+                            class="material-icons">
+                            create
+                        </i></a>
+                    <div class="background">
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-stacked ">
+                <div class="position_absolute top_0 right_0">
+                    <mat-form-field>
+                        <mat-select>
+                            <mat-option *ngFor="let stateTask of listStateTask | async" [value]="stateTask">
+                                <mat-icon aria-hidden="false" [matTooltip]="stateTask.name"
+                                    [style.color]="stateTask.color" aria-label="Example home icon">flag</mat-icon>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span class="badge teal white-text">{{task.endDate | date:'mediumDate'}}</span>
+
+                </div>
+                <div class="card-content ">
+                    <span class="card-title">{{task.title}}</span>
+                    <p>{{task.content? task.content:'SIN CONTENIDO'}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Formulario de task-->
+<div [id]="nameFormTask" class="modal modal-fixed-footer">
+    <form class="row" [formGroup]="formTask" (submit)="saveAndEditTask()">
+        <div class="modal-content">
+            <input matInput formControlName="id" hidden>
+            <mat-form-field class="col s12">
+                <input matInput placeholder="Titulo" formControlName="title">
+            </mat-form-field>
+            <mat-form-field class="col s12">
+                <input matInput placeholder="contenido" formControlName="content">
+            </mat-form-field>
+            <mat-form-field class="col s12">
+                <input matInput [matDatepicker]="endDate" [min]="currentDate" (click)="endDate.open()"
+                    formControlName="endDate" placeholder="Fecha Limite">
+                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi #endDate [startAt]="currentDate"></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="modal-footer">
+            <a class=" waves-effect waves-red btn-flat">Cancelar</a>
+            <button class="waves-effect waves-green btn-small" [disabled]="!formTask.valid">Guardar</button>
+        </div>
+    </form>
+</div>
+<!--Fin de Formulrio de task-->

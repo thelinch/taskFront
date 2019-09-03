@@ -1,0 +1,79 @@
+<div class="row">
+    <div class="col m12 center-align">
+        <a class="waves-effect waves-teal margin_tiny blue btn-large btn-floating "
+            (click)="openModal(idModalCreateCicleAcademic);cleanForm(formAddCicleAcademic)">
+            <i class="material-icons">
+                add_circle_outline
+            </i>
+        </a>
+    </div>
+    <ng-container
+        *ngTemplateOutlet="((ciclesAcademics$ | async) && !(loadingCicleAcademics$ | async))?cicleAcademics:spinner">
+    </ng-container>
+    <ng-template #cicleAcademics>
+        <div class="col s12 m4" *ngFor="let cicleAcademic of ciclesAcademics$ | async " @enterState>
+            <div class="card blue-grey darken-1 hoverable">
+                <div class="card-content white-text">
+                    <span class="card-title">{{cicleAcademic.name | titlecase}}</span>
+                    <div class="position_absolute top_0 right_0  nopadding  margin_tiny">
+                        <span class="badge teal white-text"
+                            matTooltip="{{cicleAcademic.pendiente}} tareas completadas">{{cicleAcademic.completado}}</span>
+                        <span class="badge yellow darken-2 white-text"
+                            matTooltip="{{cicleAcademic.pendiente}} tareas pendientes ">{{cicleAcademic.pendiente}}</span>
+                        <span class="badge red white-text"
+                            matTooltip="{{cicleAcademic.nocompletado}} tareas no completadas ">{{cicleAcademic.nocompletado}}</span>
+                    </div>
+                </div>
+                <div class="card-action right-align">
+                    <a class="waves-effect waves-teal margin_tiny btn-small btn-floating "
+                        (click)="fillInDataFormCicleAcademic(cicleAcademic);openModal(idModalCreateCicleAcademic)"
+                        matTooltip="editar ciclo academico">
+                        <i class="material-icons">
+                            create
+                        </i>
+                    </a>
+                    <a class="waves-effect waves-teal btn-small btn-floating margin_tiny "
+                        (click)="deleteCicleAcademic(cicleAcademic.id)" matTooltip="eliminar ciclo academico">
+                        <i class="material-icons red">
+                            delete_sweep
+                        </i>
+                    </a>
+                    <a class="waves-effect waves-teal margin_tiny btn-small btn-floating "
+                        [routerLink]="['../cicleAcademic',cicleAcademic.id,'tasks']" matTooltip="tareas">
+                        <i class="material-icons">
+                            assignment
+                        </i>
+                    </a>
+                    <a class="waves-effect waves-teal margin_tiny btn-small btn-floating "
+                        [routerLink]="['../cicleAcademic',cicleAcademic.id,'tasks','calendar']"
+                        matTooltip="Calendario con tareas">
+                        <i class="material-icons">
+                            event_note
+                        </i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>
+<!--Formulario para  agregar nuevo cicleAcademic-->
+<!-- Modal Structure -->
+<div [id]="idModalCreateCicleAcademic" class="modal modal-fixed-footer">
+    <form [formGroup]="formAddCicleAcademic" class="row" (submit)="createAndEditCicleAcademic()">
+        <div class="modal-content">
+            <input formControlName="id" hidden>
+            <mat-form-field class="col s12 m12">
+                <input matInput placeholder="ciclo academico" formControlName="name">
+            </mat-form-field>
+        </div>
+        <div class="modal-footer">
+            <a class="waves-effect waves-red btn red " (click)="closeModal(idModalCreateCicleAcademic)">cancelar</a>
+            <button type="submit" class="waves-effect waves-green btn btn-medium teal"
+                [disabled]="!formAddCicleAcademic.valid">crear</button>
+        </div>
+    </form>
+</div>
+<!--Fin de formulario para agregar nuevo cicleAcademic-->
+<ng-template #spinner>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-template>
